@@ -57,12 +57,17 @@ var app = (function appController() {
     createNewCar: function createNewCar() {
       var $fragment = document.createDocumentFragment();
       var $tr = document.createElement('tr');
+      var $button = document.createElement('a');
+      $button.className = 'btn-floating waves-effect waves-light red';
+      var $icon = document.createElement('i');
+      $icon.className = 'material-icons';
       var $tdImage = document.createElement('td');
       var $image = document.createElement('img');
       var $tdBrand = document.createElement('td');
       var $tdYear = document.createElement('td');
-      var $tdPlate = document.createElement('td');
+      var $tdPlate = document.createElement('td');      
       var $tdColor = document.createElement('td');
+      var $tdRemove = document.createElement('td');
 
       $image.setAttribute('src', $('[data-js="image"]').get().value)
       $tdImage.appendChild($image);
@@ -70,13 +75,19 @@ var app = (function appController() {
       $tdBrand.textContent = $('[data-js="brand-model"]').get().value;
       $tdYear.textContent = $('[data-js="year"]').get().value;
       $tdPlate.textContent = $('[data-js="plate"]').get().value;
-      $tdColor.textContent = $('[data-js="color"]').get().value; 
+      $tdColor.textContent = $('[data-js="color"]').get().value;
+
+      $icon.textContent = 'no_sim';
+      
+      $button.appendChild($icon);
+      $tdRemove.appendChild($button);     
 
       $tr.appendChild($tdImage);
       $tr.appendChild($tdBrand);
       $tr.appendChild($tdYear);
       $tr.appendChild($tdPlate);
-      $tr.appendChild($tdColor);      
+      $tr.appendChild($tdColor);
+      $tr.appendChild($tdRemove);
 
       return $fragment.appendChild($tr);
     },
