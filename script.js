@@ -39,9 +39,9 @@
 var app = (function appController() {
   return {
     init: function init () {
-      console.log('app init');
       this.companyInfo();
       this.initEvents();
+      this.removeCar();
     },
 
     initEvents: function initEvents() {
@@ -57,8 +57,10 @@ var app = (function appController() {
     createNewCar: function createNewCar() {
       var $fragment = document.createDocumentFragment();
       var $tr = document.createElement('tr');
+      $tr.setAttribute('data-js', 'item-car');
       var $button = document.createElement('a');
       $button.className = 'btn-floating waves-effect waves-light red';
+      $button.setAttribute('data-js', 'btn-remove');
       var $icon = document.createElement('i');
       $icon.className = 'material-icons';
       var $tdImage = document.createElement('td');
@@ -112,9 +114,31 @@ var app = (function appController() {
 
     isReady: function isReady() {
       return this.readyState === 4 && this.status === 200;
+    },
+
+    removeCar: function removeCar() {
+      var $btnRemove = document.querySelector('[data-js="table-car"]');
+      $btnRemove.addEventListener('click', function() {
+        var $itemCar = document.querySelector('[data-js="item-car"]');
+        $itemCar.remove();
+      }, false);
     }
+
   };
 })();
 
 app.init();
 })(window.DOM);
+
+/*
+Agora vamos criar a funcionalidade de "remover" um carro. Adicione uma nova
+coluna na tabela, com um botão de remover.
+
+Ao clicar nesse botão, a linha da tabela deve ser removida.
+
+Faça um pull request no seu repositório, na branch `challenge-31`, e cole
+o link do pull request no `console.log` abaixo.
+
+Faça um pull request, também com a branch `challenge-31`, mas no repositório
+do curso, para colar o link do pull request do seu repo.
+*/
