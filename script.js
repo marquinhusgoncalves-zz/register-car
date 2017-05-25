@@ -2,57 +2,20 @@
   'use strict';
   // o window.DOM foi importado com o nome $
 
-  /*
-  Vamos estruturar um pequeno app utilizando módulos.
-  Nosso APP vai ser um cadastro de carros. Vamos fazê-lo por partes.
-  A primeira etapa vai ser o cadastro de veículos, de deverá funcionar da
-  seguinte forma:
-  - No início do arquivo, deverá ter as informações da sua empresa - nome e
-  telefone (já vamos ver como isso vai ser feito)
-  - Ao abrir a tela, ainda não teremos carros cadastrados. Então deverá ter
-  um formulário para cadastro do carro, com os seguintes campos:
-    - Imagem do carro (deverá aceitar uma URL)
-    - Marca / Modelo
-    - Ano
-    - Placa
-    - Cor
-    - e um botão "Cadastrar"
-
-  Logo abaixo do formulário, deverá ter uma tabela que irá mostrar todos os
-  carros cadastrados. Ao clicar no botão de cadastrar, o novo carro deverá
-  aparecer no final da tabela.
-
-  Agora você precisa dar um nome para o seu app. Imagine que ele seja uma
-  empresa que vende carros. Esse nosso app será só um catálogo, por enquanto.
-  Dê um nome para a empresa e um telefone fictício, preechendo essas informações
-  no arquivo company.json que já está criado.
-
-  Essas informações devem ser adicionadas no HTML via Ajax.
-
-  Parte técnica:
-  Separe o nosso módulo de DOM criado nas últimas aulas em
-  um arquivo DOM.js.
-
-  E aqui nesse arquivo, faça a lógica para cadastrar os carros, em um módulo
-  que será nomeado de "app".
-  */
 var app = (function appController() {
   return {
     init: function init () {
       this.companyInfo();
       this.initEvents();
       this.removeCar();
+      this.infoCar();
     },
 
     initEvents: function initEvents() {
       $('[data-js="form-register"]').on('submit', this.handleSubmit);
     },
 
-    handleSubmit: function handleSubmit(e) {
-      e.preventDefault();
-      var $tableCar = $('[data-js="table-car"]').get();
-      $tableCar.appendChild(app.createNewCar());
-    },
+    
 
     createNewCar: function createNewCar() {
       var $fragment = document.createDocumentFragment();
@@ -122,10 +85,74 @@ var app = (function appController() {
         var $itemCar = document.querySelector('[data-js="item-car"]');
         $itemCar.remove();
       }, false);
-    }
+    },
+
+    infoCar: function infoCar() {
+      var ajax = new XMLHttpRequest();
+      ajax.open('GET', 'http://localhost:3000/car');
+      ajax.send();
+      ajax.addEventListener('readystatechange', function() {
+         if(ajax.readyState === 4 && ajax.status === 200) {
+          console.log(ajax.responseText);
+        }
+      }, false)
+    },
+
+    postInfoCar: function postInfoCar() {
+      
+    },
+
+    handleSubmit: function handleSubmit(e) {
+      e.preventDefault();
+      // var $tableCar = $('[data-js="table-car"]').get();
+      // $tableCar.appendChild(app.createNewCar());
+      var ajax = new XMLHttpRequest();
+      ajax.open('POST', 'http://localhost:3000/car');
+      ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      ajax.send('image=http://www.walmart.com&brandModel=ferrari&year=2018&plate=AAA1111&color=vermelho');
+
+      ajax.onreadystatechange = function() {
+        if(ajax.readyState === 4) {
+          console.log('Usuário cadastrado');
+        }
+      };
+      this.infoCar();
+    },
 
   };
 })();
 
 app.init();
 })(window.DOM);
+
+/* 
+Já temos as funcionalidades de adicionar e remover um carro. Agora, vamos persistir esses dados, 
+salvando-os temporariamente na memória de um servidor.
+
+Nesse diretório do `challenge-32` tem uma pasta `server`. É um servidor simples, em NodeJS, para 
+que possamos utilizar para salvar as informações dos nossos carros.
+
+Para utilizá-lo, você vai precisar fazer o seguinte:
+
+- Via terminal, acesse o diretório `server`;
+- execute o comando `npm install` para instalar as dependências;
+- execute `node app.js` para iniciar o servidor.
+
+Ele irá ser executado na porta 3000, que pode ser acessada via browser no endereço: 
+`http://localhost:3000`
+
+O seu projeto não precisa estar rodando junto com o servidor. Ele pode estar em outra porta.
+As mudanças que você irá precisar fazer no seu projeto são:
+
+- Para listar os carros cadastrados ao carregar o seu projeto, faça um request GET no endereço
+`http://localhost:3000/car`
+- Para cadastrar um novo carro, faça um POST no endereço `http://localhost:3000/car`, enviando
+os seguintes campos:
+  - `image` com a URL da imagem do carro;
+  - `brandModel`, com a marca e modelo do carro;
+  - `year`, com o ano do carro;
+  - `plate`, com a placa do carro;
+  - `color`, com a cor do carro.
+
+Após enviar o POST, faça um GET no `server` e atualize a tabela para mostrar o novo carro cadastrado.
+*/
